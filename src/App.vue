@@ -1,36 +1,66 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue';
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="./assets/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-    <a href="https://www.arcblock.io/docs/blocklet-developer/getting-started" target="_blank">
-      <img src="./assets/blocklet.svg" class="logo blocklet" alt="Blocklet logo" />
-    </a>
+  <div class="profile-container">
+    <ProfileView v-if="!editMode" :userProfile="userProfile" @edit="editMode = true" />
+    <ProfileEdit v-else :userProfile="userProfile" @save="saveProfile" />
   </div>
-  <HelloWorld msg="Vite + Vue + Blocklet" />
 </template>
 
+<script lang="ts">
+import { defineComponent, ref, onMounted } from 'vue';
+import axios from 'axios';
+import ProfileView from './components/ProfileView.vue';
+import ProfileEdit from './components/ProfileEdit.vue';
+
+interface UserProfile {
+  username: string;
+  email: string;
+  phone: string;
+}
+
+export default defineComponent({
+  name: 'Profile',
+  components: {
+    ProfileView,
+    ProfileEdit
+  },
+  setup() {
+    const userProfile = ref<UserProfile>({ username: '', email: '', phone: '' });
+    const editMode = ref(false);
+
+    const fetchProfile = async () => {
+      const response = await axios.get('/api/profile');
+      userProfile.value = response.data;
+    };
+
+    const saveProfile = async (updatedProfile: UserProfile) => {
+      await axios.put('/api/profile', updatedProfile);
+      userProfile.value = updatedProfile;
+      editMode.value = false;
+    };
+
+    onMounted(fetchProfile);
+
+    return {
+      userProfile,
+      editMode,
+      saveProfile
+    };
+  }
+});
+</script>
+
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  padding: 20px;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-.logo.blocklet:hover {
-  filter: drop-shadow(0 0 2em #22cdcdaa);
+
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 10px;
+  }
 }
 </style>

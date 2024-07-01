@@ -8,7 +8,7 @@
     "bundle": "npm run bundle:client && npm run bundle:api",
     "bundle:client": "vite build",
     "bundle:api": "npm run clean && blocklet bundle --compact --create-release",
-    "deploy": "npm run bundle && blocklet deploy .blocklet/bundle",
+    "deploy": "npm run bundle && blocklet deploy .blocklet/bundle --app-id did:abt:zNKdhsiK25sF9dnJCiSpVtYCxTzfRf5iPRPM",
     "upload": "npm run bundle && blocklet upload .blocklet/release/blocklet.json",
     "lint": "eslint src api --ext .mjs,.js,.vue",
     "lint:fix": "npm run lint -- --fix",
@@ -27,7 +27,8 @@
     "cors": "^2.8.5",
     "dotenv-flow": "^4.1.0",
     "express": "^4.19.2",
-    "express-async-errors": "^3.1.1"
+    "express-async-errors": "^3.1.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@blocklet/js-sdk": "^1.16.28",
